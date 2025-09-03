@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<title>Børneordbog 1 (DA→RU)</title>
+<style>
+body { font-family: sans-serif; line-height: 1.6; margin: 20px; }
+.word { border: 1px solid #ccc; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+.hidden { display: none; }
+input[type="text"] { padding: 5px; margin: 3px; width: 120px; }
+button { margin-left: 5px; padding: 5px 10px; }
+.correct { background-color: #c8f7c5; } /* зелёный */
+.wrong { background-color: #f7c5c5; }   /* красный */
+.wordSpan { margin-right: 3px; }
+.speedControl { margin-left: 10px; }
+</style>
+</head>
+<body>
+<h2>Børneordbog 1 (DA→RU)</h2>
+<label><input type="checkbox" id="toggleWords"> Skjul alle ord</label>
+<label><input type="checkbox" id="toggleTranslations"> Skjul alle oversættelser</label>
+
+<div id="wordsContainer"></div>
+
+<script>
+const words = [
+  { da: "hund", ru: "собака", ex: "Jeg har en ___. / У меня есть собака.", parts: ["hund"] },
+  { da: "kat", ru: "кот / кошка", ex: "Hun har en ___. / У неё есть кот.", parts: ["kat"] },
+  { da: "mor", ru: "мама", ex: "Min ___ er sød. / Моя мама добрая.", parts: ["mor"] },
+  { da: "far", ru: "папа", ex: "Min ___ arbejder. / Мой папа работает.", parts: ["far"] },
+  { da: "mad", ru: "еда", ex: "Jeg spiser ___. / Я ем еду.", parts: ["mad"] },
+  { da: "vand", ru: "вода", ex: "Jeg drikker ___. / Я пью воду.", parts: ["vand"] },
+  { da: "bold", ru: "мяч", ex: "Jeg leger med en ___. / Я играю с мячом.", parts: ["bold"] },
+  { da: "hus", ru: "дом", ex: "Vi bor i et ___. / Мы живём в доме.", parts: ["hus"] },
+  { da: "bil", ru: "машина", ex: "Han kører i en ___. / Он едет на машине.", parts: ["bil"] },
+  { da: "sol", ru: "солнце", ex: "___ skinner i dag. / Сегодня светит солнце.", parts: ["sol"] },
+  { da: "regn", ru: "дождь", ex: "Det ___. / Идёт дождь.", parts: ["regn"] },
+  { da: "sove", ru: "спать", ex: "Jeg vil ___. / Я хочу спать.", parts: ["sove"] },
+  { da: "løbe", ru: "бегать", ex: "Børnene ___ i haven. / Дети бегают в саду.", parts: ["løbe"] },
+  { da: "lege", ru: "играть", ex: "De vil ___. / Они хотят играть.", parts: ["lege"] },
+  { da: "ven", ru: "друг", ex: "Han er min ___. / Он мой друг.", parts: ["ven"] },
+  { da: "bog", ru: "книга", ex: "Jeg læser en ___. / Я читаю книгу.", parts: ["bog"] },
+  { da: "madmor", ru: "кормилица / няня", ex: "___ giver mig mad. / Няня даёт мне еду.", parts: ["madmor"] },
+  { da: "sko", ru: "обувь / туфли", ex: "Jeg har nye ___. / У меня новая обувь.", parts: ["sko"] },
+  { da: "vandmelon", ru: "арбуз", ex: "Jeg spiser ___. / Я ем арбуз.", parts: ["vandmelon"] },
+  { da: "blomst", ru: "цветок", ex: "Jeg plukker en ___. / Я срываю цветок.", parts: ["blomst"] },
+  { da: "æble", ru: "яблоко", ex: "Jeg spiser et ___. / Я ем яблоко.", parts: ["æble"] },
+  { da: "banan", ru: "банан", ex: "Hun spiser en ___. / Она ест банан.", parts: ["banan"] },
+  { da: "fugl", ru: "птица", ex: "En ___ flyver i himlen. / Птица летит в небе.", parts: ["fugl"] },
+  { da: "ko", ru: "корова", ex: "___ giver mælk. / Корова даёт молоко.", parts: ["ko"] },
+  { da: "gris", ru: "свинья", ex: "En ___ bor på gården. / Свинья живёт на ферме.", parts: ["gris"] },
+  { da: "hest", ru: "лошадь", ex: "Jeg rider på en ___. / Я катаюсь на лошади.", parts: ["hest"] },
+  { da: "fisk", ru: "рыба", ex: "Jeg ser en ___ i søen. / Я вижу рыбу в озере.", parts: ["fisk"] },
+  { da: "vandkande", ru: "лейка", ex: "Jeg hælder vand fra ___ i potten. / Я поливаю горшок из лейки.", parts: ["vandkande"] },
+  { da: "stol", ru: "стул", ex: "Sæt dig på ___. / Садись на стул.", parts: ["stol"] },
+  { da: "bord", ru: "стол", ex: "Bogen ligger på ___. / Книга лежит на столе.", parts: ["bord"] },
+  { da: "hat", ru: "шляпа / шапка", ex: "Han har en ___. / У него шляпа.", parts: ["hat"] },
+  { da: "jakke", ru: "куртка", ex: "Jeg tager min ___ på. / Я надеваю куртку.", parts: ["jakke"] },
+  { da: "skoletaske", ru: "школьная сумка", ex: "Min ___ er tung. / Моя школьная сумка тяжёлая.", parts: ["skoletaske"] },
+  { da: "æske", ru: "коробка", ex: "Der er legetøj i ___. / В коробке игрушки.", parts: ["æske"] },
+  { da: "blyant", ru: "карандаш", ex: "Jeg skriver med en ___. / Я пишу карандашом.", parts: ["blyant"] },
+  { da: "papir", ru: "бумага", ex: "Tegn på ___. / Рисуй на бумаге.", parts: ["papir"] },
+  { da: "seng", ru: "кровать", ex: "Jeg sover i ___. / Я сплю в кровати.", parts: ["seng"] },
+  { da: "lampe", ru: "лампа", ex: "Tænd for ___. / Включи лампу.", parts: ["lampe"] },
+  { da: "vindue", ru: "окно", ex: "Se ud af ___. / Смотри в окно.", parts: ["vindue"] },
+  { da: "dør", ru: "дверь", ex: "Åbn ___. / Открой дверь.", parts: ["dør"] },
+  { da: "legetøj", ru: "игрушка", ex: "Børnene leger med ___. / Дети играют с игрушкой.", parts: ["legetøj"] },
+  { da: "is", ru: "мороженое", ex: "Jeg spiser ___. / Я ем мороженое.", parts: ["is"] },
+  { da: "kage", ru: "торт / пирог", ex: "Vi spiser en ___. / Мы едим торт.", parts: ["kage"] },
+  { da: "vandpistol", ru: "водяной пистолет", ex: "Han leger med en ___. / Он играет с водяным пистолетом.", parts: ["vandpistol"] },
+  { da: "ballon", ru: "шарик", ex: "Jeg har en ___. / У меня есть шарик.", parts: ["ballon"] },
+  { da: "klovn", ru: "клоун", ex: "___ laver sjov. / Клоун шутит.", parts: ["klovn"] },
+  { da: "solhat", ru: "солнечная шляпа", ex: "Jeg har en ___. / У меня есть солнечная шляпа.", parts: ["solhat"] },
+  { da: "tandbørste", ru: "зубная щётка", ex: "Jeg børster med ___ hver dag. / Я чищу зубы каждый день.", parts: ["tandbørste"] },
+  { da: "sok", ru: "носок", ex: "Jeg tager en ___ på. / Я надеваю носок.", parts: ["sok"] },
+  { da: "handske", ru: "перчатка", ex: "Jeg tager en ___ på. / Я надеваю перчатку.", parts: ["handske"] },
+  { da: "paraply", ru: "зонт", ex: "Tag en ___ med, hvis det regner. / Возьми зонт, если идёт дождь.", parts: ["paraply"] },
+  { da: "frugt", ru: "фрукты", ex: "Jeg spiser ___ hver dag. / Я ем фрукты каждый день.", parts: ["frugt"] },
+  { da: "grøn", ru: "зелёный", ex: "Græsset er ___. / Трава зелёная.", parts: ["grøn"] },
+  { da: "rød", ru: "красный", ex: "Æblet er ___. / Яблоко красное.", parts: ["rød"] },
+  { da: "blå", ru: "синий", ex: "Himlen er ___. / Небо синее.", parts: ["blå"] }
+];
+
+
+
+const container = document.getElementById("wordsContainer");
+
+words.forEach((w, idx) => {
+  const div = document.createElement("div");
+  div.className = "word";
+
+  const da = document.createElement("div");
+  da.className = "daWord";
+  da.textContent = "DA: " + w.da;
+
+  const ru = document.createElement("div");
+  ru.className = "ruWord";
+  ru.textContent = "RU: " + w.ru;
+
+  const exDiv = document.createElement("div");
+
+  if (w.da.includes("...") && w.parts.length === 2) {
+    const exParts = w.ex.split("___");
+    
+    const span1 = document.createElement("span");
+    span1.textContent = exParts[0];
+    exDiv.appendChild(span1);
+
+    const input1 = document.createElement("input");
+    input1.type = "text";
+    input1.dataset.word = w.parts[0].toLowerCase();
+    input1.className = "wordPart";
+    exDiv.appendChild(input1);
+
+    const spanMid = document.createElement("span");
+    spanMid.textContent = exParts[1];
+    exDiv.appendChild(spanMid);
+
+    const input2 = document.createElement("input");
+    input2.type = "text";
+    input2.dataset.word = w.parts[1].toLowerCase();
+    input2.className = "wordPart";
+    exDiv.appendChild(input2);
+
+    const spanEnd = document.createElement("span");
+    spanEnd.textContent = exParts[2] ? exParts[2] : "";
+    exDiv.appendChild(spanEnd);
+
+  } else {
+    let partIdx = 0;
+    w.ex.split(" ").forEach(word => {
+      if (word.includes("___")) {
+        const wordsArray = w.parts[partIdx].split(" ");
+        wordsArray.forEach(wPart => {
+          const input = document.createElement("input");
+          input.type = "text";
+          input.dataset.word = wPart.toLowerCase();
+          input.className = "wordPart";
+          exDiv.appendChild(input);
+          exDiv.appendChild(document.createTextNode(" "));
+        });
+        partIdx++;
+      } else {
+        const span = document.createElement("span");
+        span.textContent = word;
+        span.className = "wordSpan";
+        span.dataset.word = word.replace(/[.,!?]/g, "").toLowerCase();
+        exDiv.appendChild(span);
+        exDiv.appendChild(document.createTextNode(" "));
+      }
+    });
+  }
+
+  const checkBtn = document.createElement("button");
+  checkBtn.textContent = "Tjek";
+  checkBtn.onclick = () => {
+    const inputs = exDiv.querySelectorAll("input");
+    let allCorrect = true;
+    inputs.forEach(inp => {
+      const correctWords = inp.dataset.word.toLowerCase().split(" ");
+      const userWords = inp.value.trim().toLowerCase().split(" ");
+      const isCorrect = correctWords.length === userWords.length &&
+                        correctWords.every((w,i)=>w===userWords[i]);
+      if(isCorrect){
+        inp.classList.add("correct");
+        inp.classList.remove("wrong");
+      } else {
+        inp.classList.add("wrong");
+        inp.classList.remove("correct");
+        allCorrect = false;
+      }
+    });
+    const result = document.createElement("div");
+    result.className = allCorrect ? "correct" : "wrong";
+    result.textContent = allCorrect ? "Korrekt!" : "Forkert!";
+    exDiv.appendChild(result);
+    setTimeout(()=>result.remove(),1500);
+  };
+
+  const micBtn = document.createElement("button");
+  micBtn.textContent = "🎙️ Læs højt";
+  micBtn.onclick = () => {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = "da-DK";
+    recognition.interimResults = false;
+    recognition.start();
+    recognition.onresult = event => {
+      const spoken = event.results[0][0].transcript.toLowerCase();
+      exDiv.querySelectorAll("span, input").forEach(el => {
+        const word = el.dataset.word;
+        if(word && spoken.includes(word)){
+          el.classList.add("correct");
+          el.classList.remove("wrong");
+        } else if(word){
+          el.classList.add("wrong");
+          el.classList.remove("correct");
+        }
+      });
+    };
+    recognition.onerror = err => console.error("SpeechRecognition error:", err);
+  };
+
+  const playOrigBtn = document.createElement("button");
+  playOrigBtn.textContent = "▶️ Hør original";
+  
+  const speedWrapper = document.createElement("div");
+  speedWrapper.style.display = "flex";
+  speedWrapper.style.alignItems = "center";
+  speedWrapper.style.gap = "6px";
+
+  const speedSlider = document.createElement("input");
+  speedSlider.type = "range";
+  speedSlider.min = "0.5";
+  speedSlider.max = "1.5";
+  speedSlider.step = "0.1";
+  speedSlider.value = "1";
+  speedSlider.className = "speedControl";
+
+  const speedLabel = document.createElement("span");
+  speedLabel.textContent = speedSlider.value + "x";
+  speedLabel.style.fontSize = "0.9em";
+  speedLabel.style.color = "#444";
+
+  speedSlider.addEventListener("input", () => {
+    speedLabel.textContent = speedSlider.value + "x";
+  });
+
+  playOrigBtn.onclick = () => {
+    const utterance = new SpeechSynthesisUtterance(
+      w.ex.replace(/___/g, ()=>w.parts.join(" "))
+    );
+    utterance.lang = "da-DK";
+    utterance.rate = parseFloat(speedSlider.value);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  div.appendChild(da);
+  div.appendChild(ru);
+  div.appendChild(exDiv);
+  div.appendChild(checkBtn);
+  div.appendChild(micBtn);
+  div.appendChild(playOrigBtn);
+
+  speedWrapper.appendChild(speedSlider);
+  speedWrapper.appendChild(speedLabel);
+  div.appendChild(speedWrapper);
+
+  container.appendChild(div);
+});
+
+document.getElementById("toggleWords").onchange = e => {
+  document.querySelectorAll(".daWord").forEach(d => d.classList.toggle("hidden", e.target.checked));
+};
+document.getElementById("toggleTranslations").onchange = e => {
+  document.querySelectorAll(".ruWord").forEach(d => d.classList.toggle("hidden", e.target.checked));
+};
+</script>
+</body>
+</html>
