@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<title>DAG 1 (DA→RU)</title>
+<style>
+body { font-family: sans-serif; line-height: 1.6; margin: 20px; }
+.word { border: 1px solid #ccc; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+.hidden { display: none; }
+input[type="text"] { padding: 5px; margin: 3px; width: 120px; }
+button { margin-left: 5px; padding: 5px 10px; }
+.correct { background-color: #c8f7c5; } /* зелёный */
+.wrong { background-color: #f7c5c5; }   /* красный */
+.wordSpan { margin-right: 3px; }
+.speedControl { margin-left: 10px; }
+</style>
+</head>
+<body>
+<h2>DAG 1 (DA→RU)</h2>
+<label><input type="checkbox" id="toggleWords"> Skjul alle ord</label>
+<label><input type="checkbox" id="toggleTranslations"> Skjul alle oversættelser</label>
+
+<div id="wordsContainer"></div>
+
+<script>
+const words = [
+    { da: "nær", ru: "близкий / рядом", ex: "Han bor ___ skolen. Jeg stod ___ ved siden af ham.", parts: ["nær", "nær"] },
+    { da: "erendringer", ru: "изменения / перемены", ex: "Der er mange ___ i projektet. Vi diskuterede de kommende ___.", parts: ["ændringer", "ændringer"] },
+    { da: "klagger", ru: "жалобы / рекламации", ex: "Der kom mange ___ fra kunderne. Hun skrev en ___ til firmaet.", parts: ["klager", "klager"] },
+    { da: "uhyrligt", ru: "ужасный / чудовищный", ex: "Vejret var ___ koldt. Situationen var ___ stressende.", parts: ["uhyrligt", "uhyrligt"] },
+    { da: "antyde", ru: "намекать", ex: "Hans smil kunne ___ noget godt.", parts: ["antyde"] },
+    { da: "antyder", ru: "намекает", ex: "Tegnene ___ problemer.", parts: ["antyder"] },
+    { da: "antydede", ru: "намекал", ex: "Hun ___ det indirekte i sin tale.", parts: ["antydede"] },
+    { da: "antydet", ru: "намечено / намекнул", ex: "Resultaterne er allerede ___. Hun ___ det indirekte.", parts: ["antydet", "antydet"] },
+    { da: "tydeligere", ru: "очевиднее / яснее", ex: "Budskabet blev ___ med tiden. Forklaringen blev ___.", parts: ["tydeligere", "tydeligere"] },
+    { da: "regering", ru: "правительство / управление", ex: "Den danske ___ har nye love. Byens ___ tog beslutningen.", parts: ["regering", "regering"] },
+    { da: "samtidig", ru: "одновременный / одновременно", ex: "De talte ___ i telefonen. Begivenhederne skete ___.", parts: ["samtidig", "samtidig"] },
+    { da: "udvilka", ru: "неопределённый / неизвестный", ex: "Situationen var ___ og uklar. Han vidste ___ hvad der skete.", parts: ["uklar", "ikke"] },
+    { da: "frugtelige", ru: "плодотворный / продуктивный", ex: "Mødet var ___ og gav resultater. Jorden er ___ for landbrug.", parts: ["frugtelige", "frugtbart"] },
+    { da: "strøg", ru: "пройденный путь / улица", ex: "Han gik et langt ___. Vi boede på en smuk ___.", parts: ["strøg", "strøg"] },
+    { da: "hjerne", ru: "мозг", ex: "Menneskets ___ er kompleks. Han studerer ___-forskning.", parts: ["hjerne", "hjerne"] },
+    { da: "kollapse", ru: "коллапс / рухнуть", ex: "Bygningen kan ___ under tryk. Han følte, han ville ___.", parts: ["kollaps", "kollaps"] },
+    { da: "kollapser", ru: "рухнет", ex: "Systemet ___ under presset.", parts: ["kollapser"] },
+    { da: "kollapsede", ru: "рухнул", ex: "Broen ___ under stormen.", parts: ["kollapsede"] },
+    { da: "kollapset", ru: "рухнувший / коллапсировавший", ex: "Bygningen er allerede ___. Systemet ___ under presset.", parts: ["kollapset", "kollapset"] },
+    { da: "behøvede", ru: "нуждался / требовалось", ex: "Han ___ hjælp med opgaven. Der ___ mere tid til projektet.", parts: ["behøvede", "var"] },
+    { da: "dyster", ru: "мрачный / унылый", ex: "Vejret var ___ og regnfuldt. Stemningen var ___ i rummet.", parts: ["dyster", "dyster"] },
+    { da: "forskrækkede", ru: "испуганный / встревоженный", ex: "Hun blev ___ af lyden. Børnene så ___ ud.", parts: ["forskrækkede", "forskrækkede"] },
+    { da: "glemmer", ru: "забывает", ex: "Han ___ altid sine nøgler. Hun ___ at svare på beskeden.", parts: ["glemmer", "glemmer"] },
+    { da: "glemte", ru: "забыл", ex: "Han ___ sin taske hjemme.", parts: ["glemte"] },
+    { da: "glemt", ru: "забыл / забытый", ex: "Han ___ nøglerne. Filen er allerede ___.", parts: ["glemt", "glemt"] },
+    { da: "stivnede", ru: "окаменел / застыл", ex: "Hans muskler ___ af kulde. Publikum ___ af frygt.", parts: ["stivnede", "stivnede"] },
+    { da: "ansigt", ru: "лицо / выражение", ex: "Hun vaskede sit ___. Hans ___ viste overraskelse.", parts: ["ansigt", "ansigt"] },
+    { da: "rammet", ru: "поражённый / пострадавший", ex: "Bygningen blev ___ af stormen. Han var følelsesmæssigt ___.", parts: ["rammet", "rammet"] },
+    { da: "omgående", ru: "немедленно / сразу", ex: "Vi skal reagere ___. Han fik ___ besked.", parts: ["omgående", "omgående"] },
+    { da: "iført", ru: "в одежде / одетый", ex: "Han var ___ en blå jakke. Hun stod ___ hat og frakke.", parts: ["iført", "iført"] },
+    { da: "aske", ru: "пепел / зола", ex: "Vulkanen spyttede ___ ud. Han samlede ___ fra pejsen.", parts: ["aske", "aske"] },
+    { da: "samme", ru: "тот же / одинаковый", ex: "Vi brugte den ___ metode. De havde den ___ idé.", parts: ["samme", "samme"] },
+    { da: "bånd", ru: "лента / связь", ex: "Han knyttede et ___ om pakken. Familien har stærke ___.", parts: ["bånd", "bånd"] },
+    { da: "trøstesløst", ru: "безутешный / безнадёжный", ex: "Situation var ___ trist. Han følte sig ___ alene.", parts: ["trøstesløst", "trøstesløst"] },
+    { da: "kølige", ru: "прохладный / холодный", ex: "Vinden var ___ og frisk. Hun mærkede ___ hænder.", parts: ["kølige", "kølige"] },
+    { da: "telefonopkald", ru: "телефонный звонок", ex: "Han modtog et vigtigt ___. Jeg lavede et ___ til min ven.", parts: ["telefonopkald", "telefonopkald"] },
+    { da: "fjerne", ru: "удалять", ex: "Han skal ___ fejlene i koden.", parts: ["fjerne"] },
+    { da: "fjerner", ru: "удаляет", ex: "Hun ___ gamle filer fra computeren.", parts: ["fjerner"] },
+    { da: "fjernede", ru: "удалял", ex: "Han ___ dokumentet i går.", parts: ["fjernede"] },
+    { da: "fjernet", ru: "удалён / удалил", ex: "Filen er allerede ___. Han ___ dokumentet korrekt.", parts: ["fjernet", "fjernet"] }
+];
+
+
+
+const container = document.getElementById("wordsContainer");
+
+words.forEach((w, idx) => {
+  const div = document.createElement("div");
+  div.className = "word";
+
+  const da = document.createElement("div");
+  da.className = "daWord";
+  da.textContent = "DA: " + w.da;
+
+  const ru = document.createElement("div");
+  ru.className = "ruWord";
+  ru.textContent = "RU: " + w.ru;
+
+  const exDiv = document.createElement("div");
+
+  if (w.da.includes("...") && w.parts.length === 2) {
+    const exParts = w.ex.split("___");
+    
+    const span1 = document.createElement("span");
+    span1.textContent = exParts[0];
+    exDiv.appendChild(span1);
+
+    const input1 = document.createElement("input");
+    input1.type = "text";
+    input1.dataset.word = w.parts[0].toLowerCase();
+    input1.className = "wordPart";
+    exDiv.appendChild(input1);
+
+    const spanMid = document.createElement("span");
+    spanMid.textContent = exParts[1];
+    exDiv.appendChild(spanMid);
+
+    const input2 = document.createElement("input");
+    input2.type = "text";
+    input2.dataset.word = w.parts[1].toLowerCase();
+    input2.className = "wordPart";
+    exDiv.appendChild(input2);
+
+    const spanEnd = document.createElement("span");
+    spanEnd.textContent = exParts[2] ? exParts[2] : "";
+    exDiv.appendChild(spanEnd);
+
+  } else {
+    let partIdx = 0;
+    w.ex.split(" ").forEach(word => {
+      if (word.includes("___")) {
+        const wordsArray = w.parts[partIdx].split(" ");
+        wordsArray.forEach(wPart => {
+          const input = document.createElement("input");
+          input.type = "text";
+          input.dataset.word = wPart.toLowerCase();
+          input.className = "wordPart";
+          exDiv.appendChild(input);
+          exDiv.appendChild(document.createTextNode(" "));
+        });
+        partIdx++;
+      } else {
+        const span = document.createElement("span");
+        span.textContent = word;
+        span.className = "wordSpan";
+        span.dataset.word = word.replace(/[.,!?]/g, "").toLowerCase();
+        exDiv.appendChild(span);
+        exDiv.appendChild(document.createTextNode(" "));
+      }
+    });
+  }
+
+  const checkBtn = document.createElement("button");
+  checkBtn.textContent = "Tjek";
+  checkBtn.onclick = () => {
+    const inputs = exDiv.querySelectorAll("input");
+    let allCorrect = true;
+    inputs.forEach(inp => {
+      const correctWords = inp.dataset.word.toLowerCase().split(" ");
+      const userWords = inp.value.trim().toLowerCase().split(" ");
+      const isCorrect = correctWords.length === userWords.length &&
+                        correctWords.every((w,i)=>w===userWords[i]);
+      if(isCorrect){
+        inp.classList.add("correct");
+        inp.classList.remove("wrong");
+      } else {
+        inp.classList.add("wrong");
+        inp.classList.remove("correct");
+        allCorrect = false;
+      }
+    });
+    const result = document.createElement("div");
+    result.className = allCorrect ? "correct" : "wrong";
+    result.textContent = allCorrect ? "Korrekt!" : "Forkert!";
+    exDiv.appendChild(result);
+    setTimeout(()=>result.remove(),1500);
+  };
+
+  const micBtn = document.createElement("button");
+  micBtn.textContent = "🎙️ Læs højt";
+  micBtn.onclick = () => {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = "da-DK";
+    recognition.interimResults = false;
+    recognition.start();
+    recognition.onresult = event => {
+      const spoken = event.results[0][0].transcript.toLowerCase();
+      exDiv.querySelectorAll("span, input").forEach(el => {
+        const word = el.dataset.word;
+        if(word && spoken.includes(word)){
+          el.classList.add("correct");
+          el.classList.remove("wrong");
+        } else if(word){
+          el.classList.add("wrong");
+          el.classList.remove("correct");
+        }
+      });
+    };
+    recognition.onerror = err => console.error("SpeechRecognition error:", err);
+  };
+
+  const playOrigBtn = document.createElement("button");
+  playOrigBtn.textContent = "▶️ Hør original";
+  
+  const speedWrapper = document.createElement("div");
+  speedWrapper.style.display = "flex";
+  speedWrapper.style.alignItems = "center";
+  speedWrapper.style.gap = "6px";
+
+  const speedSlider = document.createElement("input");
+  speedSlider.type = "range";
+  speedSlider.min = "0.5";
+  speedSlider.max = "1.5";
+  speedSlider.step = "0.1";
+  speedSlider.value = "1";
+  speedSlider.className = "speedControl";
+
+  const speedLabel = document.createElement("span");
+  speedLabel.textContent = speedSlider.value + "x";
+  speedLabel.style.fontSize = "0.9em";
+  speedLabel.style.color = "#444";
+
+  speedSlider.addEventListener("input", () => {
+    speedLabel.textContent = speedSlider.value + "x";
+  });
+
+  playOrigBtn.onclick = () => {
+    const utterance = new SpeechSynthesisUtterance(
+      w.ex.replace(/___/g, ()=>w.parts.join(" "))
+    );
+    utterance.lang = "da-DK";
+    utterance.rate = parseFloat(speedSlider.value);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  div.appendChild(da);
+  div.appendChild(ru);
+  div.appendChild(exDiv);
+  div.appendChild(checkBtn);
+  div.appendChild(micBtn);
+  div.appendChild(playOrigBtn);
+
+  speedWrapper.appendChild(speedSlider);
+  speedWrapper.appendChild(speedLabel);
+  div.appendChild(speedWrapper);
+
+  container.appendChild(div);
+});
+
+document.getElementById("toggleWords").onchange = e => {
+  document.querySelectorAll(".daWord").forEach(d => d.classList.toggle("hidden", e.target.checked));
+};
+document.getElementById("toggleTranslations").onchange = e => {
+  document.querySelectorAll(".ruWord").forEach(d => d.classList.toggle("hidden", e.target.checked));
+};
+</script>
+</body>
+</html>
