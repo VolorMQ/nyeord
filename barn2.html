@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<title>Børneordbog 1 (DA→RU)</title>
+<style>
+body { font-family: sans-serif; line-height: 1.6; margin: 20px; }
+.word { border: 1px solid #ccc; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+.hidden { display: none; }
+input[type="text"] { padding: 5px; margin: 3px; width: 120px; }
+button { margin-left: 5px; padding: 5px 10px; }
+.correct { background-color: #c8f7c5; } /* зелёный */
+.wrong { background-color: #f7c5c5; }   /* красный */
+.wordSpan { margin-right: 3px; }
+.speedControl { margin-left: 10px; }
+</style>
+</head>
+<body>
+<h2>Børneordbog 1 (DA→RU)</h2>
+<label><input type="checkbox" id="toggleWords"> Skjul alle ord</label>
+<label><input type="checkbox" id="toggleTranslations"> Skjul alle oversættelser</label>
+
+<div id="wordsContainer"></div>
+
+<script>
+const words = [
+  { da: "barn", ru: "ребёнок", ex: "Et ___ leger i haven. / Ребёнок играет в саду.", parts: ["barn"] },
+  { da: "veninde", ru: "подруга", ex: "Hun er min ___. / Она моя подруга.", parts: ["veninde"] },
+  { da: "familie", ru: "семья", ex: "Min ___ er stor. / Моя семья большая.", parts: ["familie"] },
+  { da: "skole", ru: "школа", ex: "Jeg går i ___. / Я хожу в школу.", parts: ["skole"] },
+  { da: "lærer", ru: "учитель", ex: "Min ___ er flink. / Мой учитель хороший.", parts: ["lærer"] },
+  { da: "stjerne", ru: "звезда", ex: "En ___ lyser på himlen. / Звезда светит на небе.", parts: ["stjerne"] },
+  { da: "måne", ru: "луна", ex: "___ skinner om natten. / Луна светит ночью.", parts: ["måne"] },
+  { da: "hånd", ru: "рука", ex: "Jeg løfter min ___. / Я поднимаю руку.", parts: ["hånd"] },
+  { da: "fod", ru: "нога (ступня)", ex: "Han vasker sin ___. / Он моет свою ногу.", parts: ["fod"] },
+  { da: "ansigt", ru: "лицо", ex: "Mit ___ er vådt. / Моё лицо мокрое.", parts: ["ansigt"] },
+  { da: "øre", ru: "ухо", ex: "Jeg hører med mit ___. / Я слышу ухом.", parts: ["øre"] },
+  { da: "øje", ru: "глаз", ex: "Jeg ser med mit ___. / Я вижу глазом.", parts: ["øje"] },
+  { da: "hår", ru: "волосы", ex: "Mit ___ er kort. / У меня короткие волосы.", parts: ["hår"] },
+  { da: "mund", ru: "рот", ex: "Jeg åbner min ___. / Я открываю рот.", parts: ["mund"] },
+  { da: "tand", ru: "зуб", ex: "Jeg børster en ___. / Я чищу зуб.", parts: ["tand"] },
+  { da: "himmel", ru: "небо", ex: "___ er blå. / Небо голубое.", parts: ["himmel"] },
+  { da: "jord", ru: "земля", ex: "Planter vokser i ___. / Растения растут в земле.", parts: ["jord"] },
+  { da: "ild", ru: "огонь", ex: "Der er ___ i pejsen. / В камине огонь.", parts: ["ild"] },
+  { da: "sten", ru: "камень", ex: "Jeg finder en ___. / Я нахожу камень.", parts: ["sten"] },
+  { da: "træ", ru: "дерево", ex: "Et stort ___ står i haven. / В саду стоит большое дерево.", parts: ["træ"] }
+];
+
+
+
+const container = document.getElementById("wordsContainer");
+
+words.forEach((w, idx) => {
+  const div = document.createElement("div");
+  div.className = "word";
+
+  const da = document.createElement("div");
+  da.className = "daWord";
+  da.textContent = "DA: " + w.da;
+
+  const ru = document.createElement("div");
+  ru.className = "ruWord";
+  ru.textContent = "RU: " + w.ru;
+
+  const exDiv = document.createElement("div");
+
+  if (w.da.includes("...") && w.parts.length === 2) {
+    const exParts = w.ex.split("___");
+    
+    const span1 = document.createElement("span");
+    span1.textContent = exParts[0];
+    exDiv.appendChild(span1);
+
+    const input1 = document.createElement("input");
+    input1.type = "text";
+    input1.dataset.word = w.parts[0].toLowerCase();
+    input1.className = "wordPart";
+    exDiv.appendChild(input1);
+
+    const spanMid = document.createElement("span");
+    spanMid.textContent = exParts[1];
+    exDiv.appendChild(spanMid);
+
+    const input2 = document.createElement("input");
+    input2.type = "text";
+    input2.dataset.word = w.parts[1].toLowerCase();
+    input2.className = "wordPart";
+    exDiv.appendChild(input2);
+
+    const spanEnd = document.createElement("span");
+    spanEnd.textContent = exParts[2] ? exParts[2] : "";
+    exDiv.appendChild(spanEnd);
+
+  } else {
+    let partIdx = 0;
+    w.ex.split(" ").forEach(word => {
+      if (word.includes("___")) {
+        const wordsArray = w.parts[partIdx].split(" ");
+        wordsArray.forEach(wPart => {
+          const input = document.createElement("input");
+          input.type = "text";
+          input.dataset.word = wPart.toLowerCase();
+          input.className = "wordPart";
+          exDiv.appendChild(input);
+          exDiv.appendChild(document.createTextNode(" "));
+        });
+        partIdx++;
+      } else {
+        const span = document.createElement("span");
+        span.textContent = word;
+        span.className = "wordSpan";
+        span.dataset.word = word.replace(/[.,!?]/g, "").toLowerCase();
+        exDiv.appendChild(span);
+        exDiv.appendChild(document.createTextNode(" "));
+      }
+    });
+  }
+
+  // кнопка проверки
+  const checkBtn = document.createElement("button");
+  checkBtn.textContent = "Tjek";
+  checkBtn.onclick = () => {
+    const inputs = exDiv.querySelectorAll("input");
+    let allCorrect = true;
+    inputs.forEach(inp => {
+      const correctWords = inp.dataset.word.toLowerCase().split(" ");
+      const userWords = inp.value.trim().toLowerCase().split(" ");
+      const isCorrect = correctWords.length === userWords.length &&
+                        correctWords.every((w,i)=>w===userWords[i]);
+      if(isCorrect){
+        inp.classList.add("correct");
+        inp.classList.remove("wrong");
+      } else {
+        inp.classList.add("wrong");
+        inp.classList.remove("correct");
+        allCorrect = false;
+      }
+    });
+    const result = document.createElement("div");
+    result.className = allCorrect ? "correct" : "wrong";
+    result.textContent = allCorrect ? "Korrekt!" : "Forkert!";
+    exDiv.appendChild(result);
+    setTimeout(()=>result.remove(),1500);
+  };
+
+  // кнопка микрофона
+  const micBtn = document.createElement("button");
+  micBtn.textContent = "🎙️ Læs højt";
+  micBtn.onclick = () => {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = "da-DK";
+    recognition.interimResults = false;
+    recognition.start();
+    recognition.onresult = event => {
+      const spoken = event.results[0][0].transcript.toLowerCase();
+      exDiv.querySelectorAll("span, input").forEach(el => {
+        const word = el.dataset.word;
+        if(word && spoken.includes(word)){
+          el.classList.add("correct");
+          el.classList.remove("wrong");
+        } else if(word){
+          el.classList.add("wrong");
+          el.classList.remove("correct");
+        }
+      });
+    };
+    recognition.onerror = err => console.error("SpeechRecognition error:", err);
+  };
+
+  // кнопка воспроизведения оригинала
+  const playOrigBtn = document.createElement("button");
+  playOrigBtn.textContent = "▶️ Hør original";
+  
+  const speedWrapper = document.createElement("div");
+  speedWrapper.style.display = "flex";
+  speedWrapper.style.alignItems = "center";
+  speedWrapper.style.gap = "6px";
+
+  const speedSlider = document.createElement("input");
+  speedSlider.type = "range";
+  speedSlider.min = "0.5";
+  speedSlider.max = "1.5";
+  speedSlider.step = "0.1";
+  speedSlider.value = "1";
+  speedSlider.className = "speedControl";
+
+  const speedLabel = document.createElement("span");
+  speedLabel.textContent = speedSlider.value + "x";
+  speedLabel.style.fontSize = "0.9em";
+  speedLabel.style.color = "#444";
+
+  speedSlider.addEventListener("input", () => {
+    speedLabel.textContent = speedSlider.value + "x";
+  });
+
+  playOrigBtn.onclick = () => {
+    // берем только датскую часть (до /, если есть перевод)
+    const daExample = w.ex.split("/")[0].trim();
+    const utterance = new SpeechSynthesisUtterance(
+      daExample.replace(/___/g, () => w.parts.join(" "))
+    );
+    utterance.lang = "da-DK";
+    utterance.rate = parseFloat(speedSlider.value);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // собираем все элементы
+  div.appendChild(da);
+  div.appendChild(ru);
+  div.appendChild(exDiv);
+  div.appendChild(checkBtn);
+  div.appendChild(micBtn);
+  div.appendChild(playOrigBtn);
+
+  speedWrapper.appendChild(speedSlider);
+  speedWrapper.appendChild(speedLabel);
+  div.appendChild(speedWrapper);
+
+  container.appendChild(div);
+});
+
+// переключатели видимости
+document.getElementById("toggleWords").onchange = e => {
+  document.querySelectorAll(".daWord").forEach(d => d.classList.toggle("hidden", e.target.checked));
+};
+document.getElementById("toggleTranslations").onchange = e => {
+  document.querySelectorAll(".ruWord").forEach(d => d.classList.toggle("hidden", e.target.checked));
+};
+</script>
+</body>
+</html>
