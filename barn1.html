@@ -151,6 +151,7 @@ words.forEach((w, idx) => {
     });
   }
 
+  // кнопка проверки
   const checkBtn = document.createElement("button");
   checkBtn.textContent = "Tjek";
   checkBtn.onclick = () => {
@@ -177,6 +178,7 @@ words.forEach((w, idx) => {
     setTimeout(()=>result.remove(),1500);
   };
 
+  // кнопка микрофона
   const micBtn = document.createElement("button");
   micBtn.textContent = "🎙️ Læs højt";
   micBtn.onclick = () => {
@@ -200,6 +202,7 @@ words.forEach((w, idx) => {
     recognition.onerror = err => console.error("SpeechRecognition error:", err);
   };
 
+  // кнопка воспроизведения оригинала
   const playOrigBtn = document.createElement("button");
   playOrigBtn.textContent = "▶️ Hør original";
   
@@ -226,14 +229,17 @@ words.forEach((w, idx) => {
   });
 
   playOrigBtn.onclick = () => {
+    // берем только датскую часть (до /, если есть перевод)
+    const daExample = w.ex.split("/")[0].trim();
     const utterance = new SpeechSynthesisUtterance(
-      w.ex.replace(/___/g, ()=>w.parts.join(" "))
+      daExample.replace(/___/g, () => w.parts.join(" "))
     );
     utterance.lang = "da-DK";
     utterance.rate = parseFloat(speedSlider.value);
     window.speechSynthesis.speak(utterance);
   };
 
+  // собираем все элементы
   div.appendChild(da);
   div.appendChild(ru);
   div.appendChild(exDiv);
@@ -248,6 +254,7 @@ words.forEach((w, idx) => {
   container.appendChild(div);
 });
 
+// переключатели видимости
 document.getElementById("toggleWords").onchange = e => {
   document.querySelectorAll(".daWord").forEach(d => d.classList.toggle("hidden", e.target.checked));
 };
