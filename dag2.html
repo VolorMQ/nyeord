@@ -2,7 +2,7 @@
 <html lang="da">
 <head>
 <meta charset="UTF-8">
-<title>DAG 1 (DA→RU)</title>
+<title>DAG 2 (DA→RU)</title>
 <style>
 body { font-family: sans-serif; line-height: 1.6; margin: 20px; }
 .word { border: 1px solid #ccc; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
@@ -16,7 +16,7 @@ button { margin-left: 5px; padding: 5px 10px; }
 </style>
 </head>
 <body>
-<h2>DAG 1 (DA→RU)</h2>
+<h2>DAG 2 (DA→RU)</h2>
 <label><input type="checkbox" id="toggleWords"> Skjul alle ord</label>
 <label><input type="checkbox" id="toggleTranslations"> Skjul alle oversættelser</label>
 
@@ -24,46 +24,32 @@ button { margin-left: 5px; padding: 5px 10px; }
 
 <script>
 const words = [
-    { da: "nær", ru: "близкий / рядом", ex: "Han bor ___ skolen. Jeg stod ___ ved siden af ham.", parts: ["nær", "nær"] },
-    { da: "erendringer", ru: "изменения / перемены", ex: "Der er mange ___ i projektet. Vi diskuterede de kommende ___.", parts: ["ændringer", "ændringer"] },
-    { da: "klagger", ru: "жалобы / рекламации", ex: "Der kom mange ___ fra kunderne. Hun skrev en ___ til firmaet.", parts: ["klager", "klager"] },
-    { da: "uhyrligt", ru: "ужасный / чудовищный", ex: "Vejret var ___ koldt. Situationen var ___ stressende.", parts: ["uhyrligt", "uhyrligt"] },
-    { da: "antyde", ru: "намекать", ex: "Hans smil kunne ___ noget godt.", parts: ["antyde"] },
-    { da: "antyder", ru: "намекает", ex: "Tegnene ___ problemer.", parts: ["antyder"] },
-    { da: "antydede", ru: "намекал", ex: "Hun ___ det indirekte i sin tale.", parts: ["antydede"] },
-    { da: "antydet", ru: "намечено / намекнул", ex: "Resultaterne er allerede ___. Hun ___ det indirekte.", parts: ["antydet", "antydet"] },
-    { da: "tydeligere", ru: "очевиднее / яснее", ex: "Budskabet blev ___ med tiden. Forklaringen blev ___.", parts: ["tydeligere", "tydeligere"] },
-    { da: "regering", ru: "правительство / управление", ex: "Den danske ___ har nye love. Byens ___ tog beslutningen.", parts: ["regering", "regering"] },
-    { da: "samtidig", ru: "одновременный / одновременно", ex: "De talte ___ i telefonen. Begivenhederne skete ___.", parts: ["samtidig", "samtidig"] },
-    { da: "udvilka", ru: "неопределённый / неизвестный", ex: "Situationen var ___ og uklar. Han vidste ___ hvad der skete.", parts: ["uklar", "ikke"] },
-    { da: "frugtelige", ru: "плодотворный / продуктивный", ex: "Mødet var ___ og gav resultater. Jorden er ___ for landbrug.", parts: ["frugtelige", "frugtbart"] },
-    { da: "strøg", ru: "пройденный путь / улица", ex: "Han gik et langt ___. Vi boede på en smuk ___.", parts: ["strøg", "strøg"] },
-    { da: "hjerne", ru: "мозг", ex: "Menneskets ___ er kompleks. Han studerer ___-forskning.", parts: ["hjerne", "hjerne"] },
-    { da: "kollapse", ru: "коллапс / рухнуть", ex: "Bygningen kan ___ under tryk. Han følte, han ville ___.", parts: ["kollaps", "kollaps"] },
-    { da: "kollapser", ru: "рухнет", ex: "Systemet ___ under presset.", parts: ["kollapser"] },
-    { da: "kollapsede", ru: "рухнул", ex: "Broen ___ under stormen.", parts: ["kollapsede"] },
-    { da: "kollapset", ru: "рухнувший / коллапсировавший", ex: "Bygningen er allerede ___. Systemet ___ under presset.", parts: ["kollapset", "kollapset"] },
-    { da: "behøvede", ru: "нуждался / требовалось", ex: "Han ___ hjælp med opgaven. Der ___ mere tid til projektet.", parts: ["behøvede", "var"] },
-    { da: "dyster", ru: "мрачный / унылый", ex: "Vejret var ___ og regnfuldt. Stemningen var ___ i rummet.", parts: ["dyster", "dyster"] },
-    { da: "forskrækkede", ru: "испуганный / встревоженный", ex: "Hun blev ___ af lyden. Børnene så ___ ud.", parts: ["forskrækkede", "forskrækkede"] },
-    { da: "glemmer", ru: "забывает", ex: "Han ___ altid sine nøgler. Hun ___ at svare på beskeden.", parts: ["glemmer", "glemmer"] },
-    { da: "glemte", ru: "забыл", ex: "Han ___ sin taske hjemme.", parts: ["glemte"] },
-    { da: "glemt", ru: "забыл / забытый", ex: "Han ___ nøglerne. Filen er allerede ___.", parts: ["glemt", "glemt"] },
-    { da: "stivnede", ru: "окаменел / застыл", ex: "Hans muskler ___ af kulde. Publikum ___ af frygt.", parts: ["stivnede", "stivnede"] },
-    { da: "ansigt", ru: "лицо / выражение", ex: "Hun vaskede sit ___. Hans ___ viste overraskelse.", parts: ["ansigt", "ansigt"] },
-    { da: "rammet", ru: "поражённый / пострадавший", ex: "Bygningen blev ___ af stormen. Han var følelsesmæssigt ___.", parts: ["rammet", "rammet"] },
-    { da: "omgående", ru: "немедленно / сразу", ex: "Vi skal reagere ___. Han fik ___ besked.", parts: ["omgående", "omgående"] },
-    { da: "iført", ru: "в одежде / одетый", ex: "Han var ___ en blå jakke. Hun stod ___ hat og frakke.", parts: ["iført", "iført"] },
-    { da: "aske", ru: "пепел / зола", ex: "Vulkanen spyttede ___ ud. Han samlede ___ fra pejsen.", parts: ["aske", "aske"] },
-    { da: "samme", ru: "тот же / одинаковый", ex: "Vi brugte den ___ metode. De havde den ___ idé.", parts: ["samme", "samme"] },
-    { da: "bånd", ru: "лента / связь", ex: "Han knyttede et ___ om pakken. Familien har stærke ___.", parts: ["bånd", "bånd"] },
-    { da: "trøstesløst", ru: "безутешный / безнадёжный", ex: "Situation var ___ trist. Han følte sig ___ alene.", parts: ["trøstesløst", "trøstesløst"] },
-    { da: "kølige", ru: "прохладный / холодный", ex: "Vinden var ___ og frisk. Hun mærkede ___ hænder.", parts: ["kølige", "kølige"] },
-    { da: "telefonopkald", ru: "телефонный звонок", ex: "Han modtog et vigtigt ___. Jeg lavede et ___ til min ven.", parts: ["telefonopkald", "telefonopkald"] },
-    { da: "fjerne", ru: "удалять", ex: "Han skal ___ fejlene i koden.", parts: ["fjerne"] },
-    { da: "fjerner", ru: "удаляет", ex: "Hun ___ gamle filer fra computeren.", parts: ["fjerner"] },
-    { da: "fjernede", ru: "удалял", ex: "Han ___ dokumentet i går.", parts: ["fjernede"] },
-    { da: "fjernet", ru: "удалён / удалил", ex: "Filen er allerede ___. Han ___ dokumentet korrekt.", parts: ["fjernet", "fjernet"] }
+  { da: "afgøre", ru: "решить / определить", ex: "Dommeren skal ___ kampen. Vi må ___, hvad vi gør nu.", parts: ["afgøre", "afgøre"] },
+  { da: "Brockdalebroen", ru: "Брокдейлский мост", ex: "___ kollapsede i historien. Mange mennesker husker ___.", parts: ["Brockdalebroen", "Brockdalebroen"] },
+  { da: "afsløre", ru: "разоблачить / раскрыть", ex: "Journalisten kunne ___ sandheden. Hun vil ___ sin hemmelighed.", parts: ["afsløre", "afsløre"] },
+  { da: "begejstret", ru: "в восторге / воодушевлённый", ex: "Han er meget ___. Publikum var ___ efter koncerten.", parts: ["begejstret", "begejstret"] },
+  { da: "involvere", ru: "вовлекать / включать", ex: "Projektet vil ___ mange elever. Vi skal ___ forældrene i mødet.", parts: ["involvere", "involvere"] },
+  { da: "udvidende", ru: "расширяющийся / расширенный", ex: "Virksomheden er ___ på markedet. Hans horisont blev ___ gennem studiet.", parts: ["udvidende", "udvidende"] },
+  { da: "stift", ru: "твёрдый / жёсткий", ex: "Stolen føltes ___. Han sad meget ___.", parts: ["stift", "stift"] },
+  { da: "hentydningen", ru: "намёк", ex: "Jeg forstod ikke ___. Hun lo af ___.", parts: ["hentydningen", "hentydningen"] },
+  { da: "gebestanden", ru: "поручения / возложенные обязанности", ex: "Han tog imod de ___. Professoren gav ham flere ___.", parts: ["gebestanden", "gebestanden"] },
+  { da: "lamslåede", ru: "ошеломлённые / потрясённые", ex: "Publikum var helt ___. Vi stod ___ og kunne ikke reagere.", parts: ["lamslåede", "lamslåede"] },
+  { da: "fupnummer", ru: "обман / трюк", ex: "Han brugte et ___. Tryllekunstneren lavede et ___.", parts: ["fupnummer", "fupnummer"] },
+  { da: "vanskelig", ru: "трудный / сложный", ex: "Det er en ___ opgave. Situationen var ___ for alle.", parts: ["vanskelig", "vanskelig"] },
+  { da: "befolkning", ru: "население", ex: "Danmarks ___ er ca. 6 millioner. Byens ___ voksede hurtigt.", parts: ["befolkning", "befolkning"] },
+  { da: "smaragdrømme", ru: "изумрудные сны", ex: "Hun havde mærkelige ___. De talte om hans ___.", parts: ["smaragdrømme", "smaragdrømme"] },
+  { da: "umuligt", ru: "невозможно", ex: "Det er helt ___. At flyve uden vinger er ___.", parts: ["umuligt", "umuligt"] },
+  { da: "oprør", ru: "восстание / бунт", ex: "Der var et ___ i landet. Eleverne lavede ___ mod læreren.", parts: ["oprør", "oprør"] },
+  { da: "øjeblikkelige", ru: "немедленные / мгновенные", ex: "Han krævede ___ svar. Der kom ___ reaktioner.", parts: ["øjeblikkelige", "øjeblikkelige"] },
+  { da: "mudderbrunt", ru: "грязно-коричневый / мутно-бурый", ex: "Hun bar en ___ frakke. Vandet var blevet ___.", parts: ["mudderbrunt", "mudderbrunt"] },
+  { da: "nåede", ru: "достиг / успел", ex: "Han ___ toget i tide. Hun ___ toppen af bjerget.", parts: ["nåede", "nåede"] },
+  { da: "hældte", ru: "налил / вылил", ex: "Hun ___ vand i glasset. Han ___ kaffen ud.", parts: ["hældte", "hældte"] },
+  { da: "tryllestav", ru: "волшебная палочка", ex: "Hun viftede med sin ___. Harry Potter har en ___.", parts: ["tryllestav", "tryllestav"] },
+  { da: "fremmanet", ru: "вызванный / сотворённый", ex: "Billedet var ___. Troldmanden havde ___ en ånd.", parts: ["fremmanet", "fremmanet"] },
+  { da: "fudge", ru: "ириска / помадка", ex: "Jeg købte ___ i butikken. Hun spiste et stykke ___.", parts: ["fudge", "fudge"] },
+  { da: "håbløst", ru: "безнадёжно", ex: "Situationen er ___. Han kæmpede ___ mod overmagten.", parts: ["håbløst", "håbløst"] },
+  { da: "ravgylden", ru: "янтарно-золотой", ex: "Hun bar en ___ halskæde. Solen kastede et ___ lys.", parts: ["ravgylden", "ravgylden"] },
+  { da: "betød", ru: "означало / значило", ex: "Ordet ___ noget helt andet. Det ___ meget for hende.", parts: ["betød", "betød"] }
 ];
 
 
@@ -221,7 +207,8 @@ words.forEach((w, idx) => {
 	utterance.rate = parseFloat(speedSlider.value);
     window.speechSynthesis.speak(utterance);
   };
-  
+
+
   div.appendChild(da);
   div.appendChild(ru);
   div.appendChild(exDiv);
