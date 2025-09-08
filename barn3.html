@@ -2,7 +2,7 @@
 <html lang="da">
 <head>
 <meta charset="UTF-8">
-<title>Børneordbog 2 (DA→RU)</title>
+<title>Børneordbog 3 (DA→RU)</title>
 <style>
 body { font-family: sans-serif; line-height: 1.6; margin: 20px; }
 .word { border: 1px solid #ccc; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
@@ -16,7 +16,7 @@ button { margin-left: 5px; padding: 5px 10px; }
 </style>
 </head>
 <body>
-<h2>Børneordbog 2 (DA→RU)</h2>
+<h2>Børneordbog 3 (DA→RU)</h2>
 <label><input type="checkbox" id="toggleWords"> Skjul alle ord</label>
 <label><input type="checkbox" id="toggleTranslations"> Skjul alle oversættelser</label>
 
@@ -24,27 +24,50 @@ button { margin-left: 5px; padding: 5px 10px; }
 
 <script>
 const words = [
-  { da: "barn", ru: "ребёнок", ex: "Et ___ leger i haven. / Ребёнок играет в саду.", parts: ["barn"] },
-  { da: "veninde", ru: "подруга", ex: "Hun er min ___. / Она моя подруга.", parts: ["veninde"] },
-  { da: "familie", ru: "семья", ex: "Min ___ er stor. / Моя семья большая.", parts: ["familie"] },
-  { da: "skole", ru: "школа", ex: "Jeg går i ___. / Я хожу в школу.", parts: ["skole"] },
-  { da: "lærer", ru: "учитель", ex: "Min ___ er flink. / Мой учитель хороший.", parts: ["lærer"] },
-  { da: "stjerne", ru: "звезда", ex: "En ___ lyser på himlen. / Звезда светит на небе.", parts: ["stjerne"] },
-  { da: "måne", ru: "луна", ex: "___ skinner om natten. / Луна светит ночью.", parts: ["måne"] },
-  { da: "hånd", ru: "рука", ex: "Jeg løfter min ___. / Я поднимаю руку.", parts: ["hånd"] },
-  { da: "fod", ru: "нога (ступня)", ex: "Han vasker sin ___. / Он моет свою ногу.", parts: ["fod"] },
-  { da: "ansigt", ru: "лицо", ex: "Mit ___ er vådt. / Моё лицо мокрое.", parts: ["ansigt"] },
-  { da: "øre", ru: "ухо", ex: "Jeg hører med mit ___. / Я слышу ухом.", parts: ["øre"] },
-  { da: "øje", ru: "глаз", ex: "Jeg ser med mit ___. / Я вижу глазом.", parts: ["øje"] },
-  { da: "hår", ru: "волосы", ex: "Mit ___ er kort. / У меня короткие волосы.", parts: ["hår"] },
-  { da: "mund", ru: "рот", ex: "Jeg åbner min ___. / Я открываю рот.", parts: ["mund"] },
-  { da: "tand", ru: "зуб", ex: "Jeg børster en ___. / Я чищу зуб.", parts: ["tand"] },
-  { da: "himmel", ru: "небо", ex: "___ er blå. / Небо голубое.", parts: ["himmel"] },
-  { da: "jord", ru: "земля", ex: "Planter vokser i ___. / Растения растут в земле.", parts: ["jord"] },
-  { da: "ild", ru: "огонь", ex: "Der er ___ i pejsen. / В камине огонь.", parts: ["ild"] },
-  { da: "sten", ru: "камень", ex: "Jeg finder en ___. / Я нахожу камень.", parts: ["sten"] },
-  { da: "træ", ru: "дерево", ex: "Et stort ___ står i haven. / В саду стоит большое дерево.", parts: ["træ"] }
+  { da: "arbejde", ru: "работа", ex: "Jeg har meget ___. / У меня много работы.", parts: ["arbejde"] },
+  { da: "penge", ru: "деньги", ex: "Han tjener mange ___. / Он зарабатывает много денег.", parts: ["penge"] },
+  { da: "butik", ru: "магазин", ex: "Jeg køber mad i ___. / Я покупаю еду в магазине.", parts: ["butik"] },
+  { da: "by", ru: "город", ex: "København er en stor ___. / Копенгаген — большой город.", parts: ["by"] },
+  { da: "land", ru: "страна", ex: "Danmark er et lille ___. / Дания — маленькая страна.", parts: ["land"] },
+  { da: "vej", ru: "дорога / улица", ex: "Vi bor på en stille ___. / Мы живём на тихой улице.", parts: ["vej"] },
+  { da: "marked", ru: "рынок", ex: "De sælger frugt på ___. / На рынке продают фрукты.", parts: ["marked"] },
+  { da: "krop", ru: "тело", ex: "Min ___ er træt. / Моё тело устало.", parts: ["krop"] },
+  { da: "mave", ru: "живот", ex: "Jeg har ondt i ___. / У меня болит живот.", parts: ["mave"] },
+  { da: "ryg", ru: "спина", ex: "Han bærer tasken på ___. / Он несёт сумку на спине.", parts: ["ryg"] },
+  { da: "finger", ru: "палец", ex: "Jeg skar mig i ___. / Я порезал палец.", parts: ["finger"] },
+  { da: "venstre", ru: "лево", ex: "Drej til ___. / Поверни налево.", parts: ["venstre"] },
+  { da: "højre", ru: "право", ex: "Gå til ___. / Иди направо.", parts: ["højre"] },
+  { da: "morgen", ru: "утро", ex: "God ___. / Доброе утро.", parts: ["morgen"] },
+  { da: "aften", ru: "вечер", ex: "God ___. / Добрый вечер.", parts: ["aften"] },
+  { da: "nat", ru: "ночь", ex: "God ___. / Спокойной ночи.", parts: ["nat"] },
+  { da: "uge", ru: "неделя", ex: "Der er syv dage i en ___. / В неделе семь дней.", parts: ["uge"] },
+  { da: "måned", ru: "месяц", ex: "En ___ har 30 dage. / В месяце 30 дней.", parts: ["måned"] },
+  { da: "år", ru: "год", ex: "Jeg fylder 20 ___ i morgen. / Мне завтра исполнится 20 лет.", parts: ["år"] },
+  { da: "transport", ru: "транспорт / перевозка", ex: "Jeg bruger offentlig ___ til arbejde. Transporten var forsinket.", parts: ["transport", "transport"] },
+  { da: "billet", ru: "билет", ex: "Jeg købte en ___. / Я купил билет.", parts: ["billet"] },
+  { da: "tog", ru: "поезд", ex: "Jeg tager ___ til byen. / Я еду на поезде в город.", parts: ["tog"] },
+  { da: "bus", ru: "автобус", ex: "Bussen kommer kl. 8. / Автобус приедет в 8 часов.", parts: ["bus"] },
+  { da: "cykel", ru: "велосипед", ex: "Jeg kører på ___. / Я еду на велосипеде.", parts: ["cykel"] },
+  { da: "restaurant", ru: "ресторан", ex: "Vi spiser på en ___. / Мы едим в ресторане.", parts: ["restaurant"] },
+  { da: "kaffe", ru: "кофе", ex: "Jeg drikker ___. / Я пью кофе.", parts: ["kaffe"] },
+  { da: "te", ru: "чай", ex: "Hun drikker ___. / Она пьёт чай.", parts: ["te"] },
+  { da: "vandflaske", ru: "бутылка воды", ex: "Jeg har en ___. / У меня есть бутылка воды.", parts: ["vandflaske"] },
+  { da: "computer", ru: "компьютер", ex: "Jeg arbejder på ___. / Я работаю за компьютером.", parts: ["computer"] },
+  { da: "telefon", ru: "телефон", ex: "Min ___ ringer hele tiden. / Мой телефон всё время звонит.", parts: ["telefon"] },
+  { da: "boghandel", ru: "книжный магазин", ex: "Jeg går til ___ for at købe bøger. / Я иду в книжный магазин, чтобы купить книги.", parts: ["boghandel"] },
+  { da: "bibliotek", ru: "библиотека", ex: "Vi læser bøger på ___. / Мы читаем книги в библиотеке.", parts: ["bibliotek"] },
+  { da: "posthus", ru: "почта", ex: "Jeg sender brevet på ___. / Я отправляю письмо на почте.", parts: ["posthus"] },
+  { da: "sygehus", ru: "больница", ex: "Han blev indlagt på ___. / Его положили в больницу.", parts: ["sygehus"] },
+  { da: "park", ru: "парк", ex: "Børn leger i ___. / Дети играют в парке.", parts: ["park"] },
+  { da: "museum", ru: "музей", ex: "Vi besøger et ___. / Мы посещаем музей.", parts: ["museum"] },
+  { da: "teater", ru: "театр", ex: "De går i ___. / Они идут в театр.", parts: ["teater"] },
+  { da: "bio", ru: "кино / кинотеатр", ex: "Vi går i ___. / Мы идём в кино.", parts: ["bio"] },
+  { da: "hotel", ru: "отель", ex: "Vi bor på et ___. / Мы останавливаемся в отеле.", parts: ["hotel"] },
+  { da: "fly", ru: "самолёт", ex: "Jeg rejser med ___. / Я путешествую на самолёте.", parts: ["fly"] },
+  { da: "tøj", ru: "одежда", ex: "Jeg køber nyt ___. / Я покупаю новую одежду.", parts: ["tøj"] },
+  { da: "sko", ru: "обувь", ex: "Hun har nye ___. / У неё новая обувь.", parts: ["sko"] }
 ];
+
 
 
 
