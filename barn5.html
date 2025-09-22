@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<title>Børneordbog 5 (DA→RU)</title>
+<style>
+body { font-family: sans-serif; line-height: 1.6; margin: 20px; }
+.word { border: 1px solid #ccc; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+.hidden { display: none; }
+input[type="text"] { padding: 5px; margin: 3px; width: 120px; }
+button { margin-left: 5px; padding: 5px 10px; }
+.correct { background-color: #c8f7c5; } /* зелёный */
+.wrong { background-color: #f7c5c5; }   /* красный */
+.wordSpan { margin-right: 3px; }
+.speedControl { margin-left: 10px; }
+</style>
+</head>
+<body>
+<h2>Børneordbog 5 (DA→RU)</h2>
+<label><input type="checkbox" id="toggleWords"> Skjul alle ord</label>
+<label><input type="checkbox" id="toggleTranslations"> Skjul alle oversættelser</label>
+
+<div id="wordsContainer"></div>
+
+<script>
+const words = [
+  { da: "bank", ru: "банк", ex: "Han arbejder i en ___. / Он работает в банке.", parts: ["bank"] },
+  { da: "butik", ru: "магазин", ex: "Vi køber mad i en ___. / Мы покупаем еду в магазине.", parts: ["butik"] },
+  { da: "supermarked", ru: "супермаркет", ex: "Jeg går til ___. / Я иду в супермаркет.", parts: ["supermarked"] },
+  { da: "marked", ru: "рынок", ex: "Der er grøntsager på ___. / На рынке есть овощи.", parts: ["marked"] },
+  { da: "apotek", ru: "аптека", ex: "Hun køber medicin på ___. / Она покупает лекарства в аптеке.", parts: ["apotek"] },
+  { da: "hospital", ru: "больница", ex: "Han blev indlagt på ___. / Его положили в больницу.", parts: ["hospital"] },
+  { da: "station", ru: "станция / вокзал", ex: "Toget stopper på ___. / Поезд останавливается на станции.", parts: ["station"] },
+  { da: "lufthavn", ru: "аэропорт", ex: "Vi rejser fra ___. / Мы вылетаем из аэропорта.", parts: ["lufthavn"] },
+  { da: "havn", ru: "порт / гавань", ex: "Skibet ligger i ___. / Корабль стоит в гавани.", parts: ["havn"] },
+  { da: "bro", ru: "мост", ex: "Bilen kører over ___. / Машина едет по мосту.", parts: ["bro"] },
+  { da: "vej", ru: "дорога", ex: "Vi går ned ad ___. / Мы идём по дороге.", parts: ["vej"] },
+  { da: "gade", ru: "улица", ex: "Jeg bor på en ___. / Я живу на улице.", parts: ["gade"] },
+  { da: "plads", ru: "площадь", ex: "Folk samles på ___. / Люди собираются на площади.", parts: ["plads"] },
+  { da: "kirke", ru: "церковь", ex: "Der er en gammel ___ i byen. / В городе есть старая церковь.", parts: ["kirke"] },
+  { da: "slot", ru: "замок / дворец", ex: "Kongen bor i et ___. / Король живёт в замке.", parts: ["slot"] },
+  { da: "borg", ru: "крепость", ex: "___ ligger på bjerget. / Крепость стоит на горе.", parts: ["borg"] },
+  { da: "museum", ru: "музей", ex: "Vi besøger ___. / Мы посещаем музей.", parts: ["museum"] },
+  { da: "bibliotek", ru: "библиотека", ex: "Jeg låner bøger på ___. / Я беру книги в библиотеке.", parts: ["bibliotek"] },
+  { da: "teater", ru: "театр", ex: "Vi ser et stykke i ___. / Мы смотрим пьесу в театре.", parts: ["teater"] },
+  { da: "café", ru: "кафе", ex: "Vi drikker kaffe på en ___. / Мы пьём кофе в кафе.", parts: ["café"] },
+  { da: "restaurant", ru: "ресторан", ex: "De spiser middag på en ___. / Они ужинают в ресторане.", parts: ["restaurant"] },
+  { da: "hotel", ru: "отель", ex: "Vi bor på et ___. / Мы живём в отеле.", parts: ["hotel"] },
+  { da: "skib", ru: "корабль", ex: "Et stort ___ sejler på havet. / Большой корабль плывёт по морю.", parts: ["skib"] },
+  { da: "fly", ru: "самолёт", ex: "___ lander snart. / Самолёт скоро приземлится.", parts: ["fly"] },
+  { da: "tog", ru: "поезд", ex: "Jeg tager ___. / Я еду на поезде.", parts: ["tog"] },
+  { da: "bus", ru: "автобус", ex: "Vi venter på ___. / Мы ждём автобус.", parts: ["bus"] },
+  { da: "cykel", ru: "велосипед", ex: "Jeg kører på ___. / Я еду на велосипеде.", parts: ["cykel"] },
+  { da: "motorcykel", ru: "мотоцикл", ex: "Han kører på ___. / Он едет на мотоцикле.", parts: ["motorcykel"] },
+  { da: "skibsfart", ru: "судоходство", ex: "___ er vigtig for handelen. / Судоходство важно для торговли.", parts: ["skibsfart"] },
+  { da: "kuffert", ru: "чемодан", ex: "Hun pakker sin ___. / Она пакует свой чемодан.", parts: ["kuffert"] },
+  { da: "taske", ru: "сумка", ex: "Jeg har en stor ___. / У меня большая сумка.", parts: ["taske"] },
+  { da: "pung", ru: "кошелёк", ex: "Jeg mistede min ___. / Я потерял кошелёк.", parts: ["pung"] },
+  { da: "nøgle", ru: "ключ", ex: "Jeg har en ___. / У меня есть ключ.", parts: ["nøgle"] },
+  { da: "telefon", ru: "телефон", ex: "Jeg ringer fra min ___. / Я звоню со своего телефона.", parts: ["telefon"] },
+  { da: "computer", ru: "компьютер", ex: "Jeg arbejder på min ___. / Я работаю за компьютером.", parts: ["computer"] },
+  { da: "fjernsyn", ru: "телевизор", ex: "De ser ___ hver aften. / Они смотрят телевизор каждый вечер.", parts: ["fjernsyn"] },
+  { da: "radio", ru: "радио", ex: "Jeg hører musik på ___. / Я слушаю музыку по радио.", parts: ["radio"] },
+  { da: "avis", ru: "газета", ex: "Jeg læser en ___. / Я читаю газету.", parts: ["avis"] },
+  { da: "blad", ru: "журнал / лист", ex: "Hun køber et mode___. / Она покупает модный журнал.", parts: ["blad"] },
+  { da: "brev", ru: "письмо", ex: "Jeg skriver et ___. / Я пишу письмо.", parts: ["brev"] },
+  { da: "pakke", ru: "посылка", ex: "Der kom en ___. / Пришла посылка.", parts: ["pakke"] },
+  { da: "posthus", ru: "почта", ex: "Han arbejder på ___. / Он работает на почте.", parts: ["posthus"] },
+  { da: "arbejde", ru: "работа", ex: "Jeg går på ___. / Я иду на работу.", parts: ["arbejde"] },
+  { da: "job", ru: "работа / должность", ex: "Han fik et nyt ___. / Он получил новую работу.", parts: ["job"] },
+  { da: "stilling", ru: "должность / позиция", ex: "Hun søger en ny ___. / Она ищет новую должность.", parts: ["stilling"] },
+  { da: "løn", ru: "зарплата", ex: "Han får sin ___. / Он получает зарплату.", parts: ["løn"] },
+  { da: "kontor", ru: "офис", ex: "Jeg arbejder på ___. / Я работаю в офисе.", parts: ["kontor"] },
+  { da: "fabrik", ru: "фабрика", ex: "Hun arbejder på en ___. / Она работает на фабрике.", parts: ["fabrik"] },
+  { da: "arbejder", ru: "рабочий", ex: "En ___ arbejder hårdt. / Рабочий усердно трудится.", parts: ["arbejder"] },
+  { da: "ingeniør", ru: "инженер", ex: "Han er ___. / Он инженер.", parts: ["ingeniør"] },
+  { da: "mekaniker", ru: "механик", ex: "Jeg kender en dygtig ___. / Я знаю хорошего механика.", parts: ["mekaniker"] },
+  { da: "tømrer", ru: "плотник", ex: "En ___ bygger huse. / Плотник строит дома.", parts: ["tømrer"] },
+  { da: "maler", ru: "маляр / художник", ex: "En ___ maler væggen. / Маляр красит стену.", parts: ["maler"] },
+  { da: "kok", ru: "повар", ex: "En ___ laver mad. / Повар готовит еду.", parts: ["kok"] },
+  { da: "tjener", ru: "официант", ex: "En ___ serverer mad. / Официант подаёт еду.", parts: ["tjener"] },
+  { da: "politi", ru: "полиция", ex: "___ hjælper borgerne. / Полиция помогает гражданам.", parts: ["politi"] },
+  { da: "brandmand", ru: "пожарный", ex: "En ___ slukker ilden. / Пожарный тушит огонь.", parts: ["brandmand"] },
+  { da: "soldat", ru: "солдат", ex: "En ___ beskytter landet. / Солдат защищает страну.", parts: ["soldat"] },
+  { da: "konge", ru: "король", ex: "___ regerer landet. / Король правит страной.", parts: ["konge"] },
+  { da: "dronning", ru: "королева", ex: "___ bor på slottet. / Королева живёт в замке.", parts: ["dronning"] },
+  { da: "prins", ru: "принц", ex: "En ___ bor på slottet. / Принц живёт в замке.", parts: ["prins"] },
+  { da: "prinsesse", ru: "принцесса", ex: "En ___ bærer en krone. / Принцесса носит корону.", parts: ["prinsesse"] }
+];
+
+
+
+const container = document.getElementById("wordsContainer");
+
+words.forEach((w, idx) => {
+  const div = document.createElement("div");
+  div.className = "word";
+
+  const da = document.createElement("div");
+  da.className = "daWord";
+  da.textContent = "DA: " + w.da;
+
+  const ru = document.createElement("div");
+  ru.className = "ruWord";
+  ru.textContent = "RU: " + w.ru;
+
+  const exDiv = document.createElement("div");
+
+  if (w.da.includes("...") && w.parts.length === 2) {
+    const exParts = w.ex.split("___");
+    
+    const span1 = document.createElement("span");
+    span1.textContent = exParts[0];
+    exDiv.appendChild(span1);
+
+    const input1 = document.createElement("input");
+    input1.type = "text";
+    input1.dataset.word = w.parts[0].toLowerCase();
+    input1.className = "wordPart";
+    exDiv.appendChild(input1);
+
+    const spanMid = document.createElement("span");
+    spanMid.textContent = exParts[1];
+    exDiv.appendChild(spanMid);
+
+    const input2 = document.createElement("input");
+    input2.type = "text";
+    input2.dataset.word = w.parts[1].toLowerCase();
+    input2.className = "wordPart";
+    exDiv.appendChild(input2);
+
+    const spanEnd = document.createElement("span");
+    spanEnd.textContent = exParts[2] ? exParts[2] : "";
+    exDiv.appendChild(spanEnd);
+
+  } else {
+    let partIdx = 0;
+    w.ex.split(" ").forEach(word => {
+      if (word.includes("___")) {
+        const wordsArray = w.parts[partIdx].split(" ");
+        wordsArray.forEach(wPart => {
+          const input = document.createElement("input");
+          input.type = "text";
+          input.dataset.word = wPart.toLowerCase();
+          input.className = "wordPart";
+          exDiv.appendChild(input);
+          exDiv.appendChild(document.createTextNode(" "));
+        });
+        partIdx++;
+      } else {
+        const span = document.createElement("span");
+        span.textContent = word;
+        span.className = "wordSpan";
+        span.dataset.word = word.replace(/[.,!?]/g, "").toLowerCase();
+        exDiv.appendChild(span);
+        exDiv.appendChild(document.createTextNode(" "));
+      }
+    });
+  }
+
+  // кнопка проверки
+  const checkBtn = document.createElement("button");
+  checkBtn.textContent = "Tjek";
+  checkBtn.onclick = () => {
+    const inputs = exDiv.querySelectorAll("input");
+    let allCorrect = true;
+    inputs.forEach(inp => {
+      const correctWords = inp.dataset.word.toLowerCase().split(" ");
+      const userWords = inp.value.trim().toLowerCase().split(" ");
+      const isCorrect = correctWords.length === userWords.length &&
+                        correctWords.every((w,i)=>w===userWords[i]);
+      if(isCorrect){
+        inp.classList.add("correct");
+        inp.classList.remove("wrong");
+      } else {
+        inp.classList.add("wrong");
+        inp.classList.remove("correct");
+        allCorrect = false;
+      }
+    });
+    const result = document.createElement("div");
+    result.className = allCorrect ? "correct" : "wrong";
+    result.textContent = allCorrect ? "Korrekt!" : "Forkert!";
+    exDiv.appendChild(result);
+    setTimeout(()=>result.remove(),1500);
+  };
+
+  // кнопка микрофона
+  const micBtn = document.createElement("button");
+  micBtn.textContent = "🎙️ Læs højt";
+  micBtn.onclick = () => {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = "da-DK";
+    recognition.interimResults = false;
+    recognition.start();
+    recognition.onresult = event => {
+      const spoken = event.results[0][0].transcript.toLowerCase();
+      exDiv.querySelectorAll("span, input").forEach(el => {
+        const word = el.dataset.word;
+        if(word && spoken.includes(word)){
+          el.classList.add("correct");
+          el.classList.remove("wrong");
+        } else if(word){
+          el.classList.add("wrong");
+          el.classList.remove("correct");
+        }
+      });
+    };
+    recognition.onerror = err => console.error("SpeechRecognition error:", err);
+  };
+
+  // кнопка воспроизведения оригинала
+  const playOrigBtn = document.createElement("button");
+  playOrigBtn.textContent = "▶️ Hør original";
+  
+  const speedWrapper = document.createElement("div");
+  speedWrapper.style.display = "flex";
+  speedWrapper.style.alignItems = "center";
+  speedWrapper.style.gap = "6px";
+
+  const speedSlider = document.createElement("input");
+  speedSlider.type = "range";
+  speedSlider.min = "0.5";
+  speedSlider.max = "1.5";
+  speedSlider.step = "0.1";
+  speedSlider.value = "1";
+  speedSlider.className = "speedControl";
+
+  const speedLabel = document.createElement("span");
+  speedLabel.textContent = speedSlider.value + "x";
+  speedLabel.style.fontSize = "0.9em";
+  speedLabel.style.color = "#444";
+
+  speedSlider.addEventListener("input", () => {
+    speedLabel.textContent = speedSlider.value + "x";
+  });
+
+  playOrigBtn.onclick = () => {
+    // берем только датскую часть (до /, если есть перевод)
+    const daExample = w.ex.split("/")[0].trim();
+    const utterance = new SpeechSynthesisUtterance(
+      daExample.replace(/___/g, () => w.parts.join(" "))
+    );
+    utterance.lang = "da-DK";
+    utterance.rate = parseFloat(speedSlider.value);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // собираем все элементы
+  div.appendChild(da);
+  div.appendChild(ru);
+  div.appendChild(exDiv);
+  div.appendChild(checkBtn);
+  div.appendChild(micBtn);
+  div.appendChild(playOrigBtn);
+
+  speedWrapper.appendChild(speedSlider);
+  speedWrapper.appendChild(speedLabel);
+  div.appendChild(speedWrapper);
+
+  container.appendChild(div);
+});
+
+// переключатели видимости
+document.getElementById("toggleWords").onchange = e => {
+  document.querySelectorAll(".daWord").forEach(d => d.classList.toggle("hidden", e.target.checked));
+};
+document.getElementById("toggleTranslations").onchange = e => {
+  document.querySelectorAll(".ruWord").forEach(d => d.classList.toggle("hidden", e.target.checked));
+};
+</script>
+</body>
+</html>
